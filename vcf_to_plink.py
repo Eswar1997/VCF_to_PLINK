@@ -69,15 +69,12 @@ def vcf_to_ped(vcf_file,output_file_name):
 def convert_vcf(input_file_name,output_file_name):
     #print("VCF file is :" +input_file_name)
     #print("Plink formatted file is :" +output_file_name)
-    pattern = re.compile("^#CHROM")
-    for i, line in enumerate(open(input_file_name)):
-        for match in re.finditer(pattern, line):
-            #Uncomment the following line if you want to know where the vcf header is ending
-            print ('VCF headers till line %s: %s' %(i+1, match.group()))
-            start_at=int(i)
-
-    vcf_file = pd.read_csv(input_file_name,header = start_at,sep='\s',na_filter = True,skip_blank_lines= True, engine='python')
-    #print(vcf_file.head())
+    for line in open(input_file_name):
+	    if line.startswith('#C'):
+			header_columns = line[1:].split()
+            
+    vcf_file = pd.read_csv(input_file_name,sep='\t',header=None,comment="#",names = header_columns)
+    print(vcf_file.head())
     print("Number of markers in the given vcf file is ",vcf_file.shape[0])
     print("Number of samples in the given vcf file is ",vcf_file.shape[1])
 
